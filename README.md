@@ -1,20 +1,38 @@
-# Purrsor
+<p align="center">
+  <img src="docs/readme-assets/purrsor-icon.png" alt="Purrsor app icon" width="180">
+</p>
 
-Purrsor is a macOS desktop pet built as a native AppKit overlay.
+<h1 align="center">Purrsor</h1>
 
-It stays intentionally small:
+<p align="center">A tiny macOS desktop cat that reacts to your typing, naps on your screen, and stays out of the way.</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/macOS-14%2B-111111?logo=apple&logoColor=white" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/AppKit-Native-2f6fed" alt="Native AppKit">
+  <img src="https://img.shields.io/badge/Status-Local%20Builds-5a5a5a" alt="Local builds">
+</p>
+
+<p align="center">
+  <video src="docs/readme-assets/demo.mp4" controls muted playsinline width="900"></video>
+</p>
+
+<p align="center">
+  <a href="docs/readme-assets/demo.mp4">Watch the demo video</a>
+</p>
+
+Purrsor is a native macOS desktop pet built with AppKit. It stays intentionally small:
 
 - transparent always-on-top overlay
-- global keyboard-reactive cat behaviors
+- keyboard-reactive cat moods
 - local reminders and customization
-- no cloud services, accounts or telemetry
+- no cloud services, accounts, or telemetry
 
-## Current Status
+## Platform
 
-- macOS only
-- native `Swift + AppKit`
-- not notarized
-- source builds and manual app bundle distribution
+- Supported: macOS 14+
+- Stack: native `Swift + AppKit`
+- Distribution: local source builds and manual app bundles
+- Notarization: not currently notarized
 
 ## Features
 
@@ -26,6 +44,7 @@ It stays intentionally small:
 - menu bar controls
 - launch at login toggle in preferences
 - customizable text bubble and typing indicator
+- adjustable overlay scale
 - stretch reminders
 
 ## Project Layout
@@ -68,7 +87,7 @@ Use a real `.app` bundle when testing Accessibility-sensitive behavior such as g
 
 ## Building a standalone app
 
-To produce a standalone `.app` you can move into `/Applications`:
+To produce a standalone `.app` that you can move into `/Applications`:
 
 ```bash
 chmod +x scripts/build-app.sh
@@ -137,7 +156,7 @@ tccutil reset Accessibility com.anuraagkhare.purrsor.dev
 
 ## Next milestones
 
-1. Add broader scale ranges and better drag persistence polish.
-2. Expand reminder UI and scheduling options.
-3. Improve signing and packaging for smoother local installs.
-4. Add a focused reminder mode such as pomodoro-style prompts.
+- Add broader set of poses and improved animations.
+- Expand reminder UI and scheduling options.
+- Improve signing and packaging for smoother local installs.
+- Add a focused reminder mode such as pomodoro-style prompts.
