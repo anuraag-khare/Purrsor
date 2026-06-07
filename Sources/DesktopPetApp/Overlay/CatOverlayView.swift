@@ -37,7 +37,6 @@ final class CatOverlayView: NSView {
     private var typingIndicatorTextColor = NSColor.white
     private var cursorLocationInView: NSPoint?
     private var isHovering = false
-    private var cursorTrackingArea: NSTrackingArea?
 
     override var isOpaque: Bool {
         false
@@ -45,28 +44,12 @@ final class CatOverlayView: NSView {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        addTrackingAreaIfNeeded()
         configureAnimation(forKey: currentAnimationKey)
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         nil
-    }
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-
-        if let cursorTrackingArea {
-            removeTrackingArea(cursorTrackingArea)
-        }
-
-        addTrackingAreaIfNeeded()
-    }
-
-    override func resetCursorRects() {
-        super.resetCursorRects()
-        addCursorRect(bounds, cursor: .pointingHand)
     }
 
     func render(_ state: CatVisualState) {
@@ -132,6 +115,7 @@ final class CatOverlayView: NSView {
 
     func updateCursor(locationInView: NSPoint?, isHovering: Bool) {
         let previousLocation = cursorLocationInView
+        let previousHoverState = self.isHovering
         let locationChanged = {
             guard let previousLocation, let locationInView else {
                 return (previousLocation == nil) != (locationInView == nil)
@@ -142,12 +126,12 @@ final class CatOverlayView: NSView {
             return deltaX > 1 || deltaY > 1
         }()
 
-        guard locationChanged || self.isHovering != isHovering else {
-            return
-        }
-
         cursorLocationInView = locationInView
         self.isHovering = isHovering
+
+        guard locationChanged || previousHoverState != isHovering else {
+            return
+        }
 
         guard shouldRenderDynamicPupils,
               currentAnimation?.frames[currentFrameIndex].eyeSockets.isEmpty == false else {
@@ -170,7 +154,6 @@ final class CatOverlayView: NSView {
     override func mouseDown(with event: NSEvent) {
         mouseDownLocation = convert(event.locationInWindow, from: nil)
         isDraggingGesture = false
-        NSCursor.openHand.set()
     }
 
     override func mouseDragged(with event: NSEvent) {
@@ -182,14 +165,10 @@ final class CatOverlayView: NSView {
         let distance = hypot(currentLocation.x - mouseDownLocation.x, currentLocation.y - mouseDownLocation.y)
 
         guard distance >= 8, !isDraggingGesture else {
-            if isDraggingGesture {
-                NSCursor.closedHand.set()
-            }
             return
         }
 
         isDraggingGesture = true
-        NSCursor.closedHand.set()
         onDragChange?(true)
     }
 
@@ -207,44 +186,12 @@ final class CatOverlayView: NSView {
         let distance = hypot(mouseUpLocation.x - mouseDownLocation.x, mouseUpLocation.y - mouseDownLocation.y)
 
         if isDraggingGesture {
-            refreshCursor()
             onDragChange?(false)
             return
         }
 
         if distance < 6 {
             onPet?()
-        }
-
-        refreshCursor()
-    }
-
-    override func mouseEntered(with event: NSEvent) {
-        super.mouseEntered(with: event)
-        NSCursor.pointingHand.set()
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        super.mouseExited(with: event)
-        NSCursor.arrow.set()
-    }
-
-    private func addTrackingAreaIfNeeded() {
-        let trackingArea = NSTrackingArea(
-            rect: bounds,
-            options: [.activeAlways, .inVisibleRect, .mouseEnteredAndExited],
-            owner: self,
-            userInfo: nil
-        )
-        addTrackingArea(trackingArea)
-        cursorTrackingArea = trackingArea
-    }
-
-    private func refreshCursor() {
-        if let window, bounds.contains(convert(window.mouseLocationOutsideOfEventStream, from: nil)) {
-            NSCursor.pointingHand.set()
-        } else {
-            NSCursor.arrow.set()
         }
     }
 

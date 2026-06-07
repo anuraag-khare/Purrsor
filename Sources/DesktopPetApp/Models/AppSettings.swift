@@ -12,6 +12,18 @@ struct OverlayTextColor: Codable, Equatable {
         blue: 1.0,
         alpha: 1.0
     )
+    static let catEyeYellow = OverlayTextColor(
+        red: 0.97,
+        green: 0.92,
+        blue: 0.30,
+        alpha: 1.0
+    )
+    static let indicatorGreen = OverlayTextColor(
+        red: 0.38,
+        green: 0.78,
+        blue: 0.30,
+        alpha: 1.0
+    )
 
     init(
         red: Double,
@@ -67,12 +79,12 @@ struct AppSettings: Codable, Equatable {
         overlayOriginY: 80,
         clickThroughEnabled: false,
         overlayVisible: true,
-        wanderingEnabled: true,
+        wanderingEnabled: false,
         textBubbleVisible: true,
         keysPerSecondVisible: true,
         launchAtLoginEnabled: false,
-        bubbleTextColor: .white,
-        typingIndicatorTextColor: .white,
+        bubbleTextColor: .catEyeYellow,
+        typingIndicatorTextColor: .indicatorGreen,
         overlayScale: 1.0,
         stretchReminderMinutes: 20,
         sleepDelaySeconds: 12
