@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "canvasSize": {
+    "width": 512,
+    "height": 512
+  },
+  "layoutRect": {
+    "x": 108,
+    "y": 54,
+    "width": 342,
+    "height": 404
+  },
+  "frames": {
+    "cat-v2-idle": {
+      "eyeSocketsTopLeft": [
+        {
+          "x": 187,
+          "y": 197,
+          "width": 56,
+          "height": 55
+        },
+        {
+          "x": 301,
+          "y": 197,
+          "width": 55,
+          "height": 55
+        }
+      ]
+    },
+    "cat-v2-blink": {
+      "eyeSocketsTopLeft": []
+    },
+    "cat-v2-typing": {
+      "eyeSocketsTopLeft": [
+        {
+          "x": 204,
+          "y": 215,
+          "width": 28,
+          "height": 38
+        },
+        {
+          "x": 318,
+          "y": 213,
+          "width": 27,
+          "height": 39
+        }
+      ]
+    },
+    "cat-v2-petting": {
+      "eyeSocketsTopLeft": []
+    },
+    "cat-v2-stretch": {
+      "eyeSocketsTopLeft": []
+    },
+    "cat-v2-overheated": {
+      "eyeSocketsTopLeft": [
+        {
+          "x": 219,
+          "y": 251,
+          "width": 17,
+          "height": 15
+        },
+        {
+          "x": 314,
+          "y": 251,
+          "width": 19,
+          "height": 15
+        }
+      ]
+    }
+  }
+}

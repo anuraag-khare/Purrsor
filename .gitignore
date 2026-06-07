@@ -1,0 +1,23 @@
+.build/
+.swiftpm/
+Build/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Xcode user-specific state
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Local virtual environments
+.venv/
+
+# Local docs
+docs/sprite-catalog.md
