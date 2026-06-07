@@ -1,77 +1,200 @@
 # Architecture
 
-## Product boundary
+## Overview
 
-`Purrsor` is an independent desktop pet. It does not integrate with AI agents, editors, or external apps. The only system-wide signal in the MVP is keyboard activity.
+Purrsor is a native macOS desktop pet built with AppKit. The app runs as a lightweight menu bar utility with a transparent floating overlay, local settings persistence, and system-wide keyboard activity monitoring.
 
-## Module map
+The architecture is intentionally simple:
+
+- AppKit owns the application lifecycle and windowing
+- a floating overlay window renders the cat and handles direct interaction
+- keyboard activity feeds behavior state changes
+- a preferences window and menu bar item control local app settings
+- all state is stored locally in a small JSON settings file
+
+## Runtime Structure
+
+At launch, the app:
+
+1. Loads persisted settings
+2. Creates the floating overlay window
+3. Creates the menu bar status item
+4. Creates the preferences window controller
+5. Starts keyboard monitoring
+6. Starts behavior and motion controllers
+7. Applies current settings to the overlay and supporting services
+
+The app does not depend on any backend, network service, account system, or external integration.
+
+## Module Layout
 
 ### `App`
 
-Owns lifecycle and wiring:
+Coordinates startup and top-level wiring.
+
+Responsibilities:
 
 - bootstraps AppKit
-- creates the overlay window
-- creates the status item
-- starts keyboard monitoring
-- persists simple settings
+- loads and saves settings
+- wires overlay, preferences, status item, and behavior systems together
+- applies setting changes across the app
 
 ### `Overlay`
 
-Owns all on-screen pet behavior:
+Owns the on-screen pet.
 
-- transparent floating panel
-- visibility and click-through state
-- current cat visual state
-- placeholder drawing today, sprite renderer later
+Responsibilities:
+
+- hosts the transparent floating panel
+- renders sprite states and text overlays
+- handles direct mouse interaction such as petting and drag-to-reposition
+- tracks cursor position for eye movement
+
+Key types:
+
+- `OverlayWindowController`
+- `CatOverlayView`
+- `CatSpriteCatalog`
 
 ### `Input`
 
-Owns raw input and interpretation:
+Converts raw system input into behavior signals.
 
-- `GlobalKeyMonitor`: receives `keyDown` events
-- `TypingIntensityTracker`: converts key events into moods
+Responsibilities:
 
-### `Models`
+- monitors global keyboard activity
+- calculates typing intensity over time
 
-Shared value types:
+Key types:
 
-- app settings
-- cat mood and visual state
+- `GlobalKeyMonitor`
+- `TypingIntensityTracker`
+
+### `Behavior`
+
+Maps input and context into cat mood/state changes.
+
+Responsibilities:
+
+- drives mood transitions such as idle, typing, petting, sleepy, and reminding
+- reacts to hover, drag, and petting signals
+- manages reminder and sleep timing
+
+Key type:
+
+- `PetBehaviorController`
+
+### `Motion`
+
+Controls autonomous movement behavior for the overlay.
+
+Responsibilities:
+
+- manages wandering movement when enabled
+- suspends movement during interactions or state-specific animations
+- keeps movement aligned with the overlay’s current frame and home position
+
+Key type:
+
+- `PetMotionController`
+
+### `Preferences`
+
+Owns the settings UI.
+
+Responsibilities:
+
+- presents current settings
+- emits user-driven updates through callbacks
+- reflects runtime service state such as Accessibility or launch-at-login status
+
+Key types:
+
+- `PreferencesWindowController`
+- `PreferencesViewController`
 
 ### `Status`
 
-Menu bar utility shell:
+Owns the menu bar entry point.
 
-- show or hide overlay
-- toggle click-through
-- request accessibility access
-- quit app
+Responsibilities:
+
+- exposes quick actions for preferences, overlay visibility, and click-through
+- shows app presence in the macOS menu bar
+
+Key type:
+
+- `StatusItemController`
+
+### `Models`
+
+Contains shared app state and value types.
+
+Responsibilities:
+
+- stores persisted settings
+- represents cat visual and motion state
+- defines UI-facing option sets and defaults
 
 ### `Support`
 
-Cross-cutting helpers:
+Holds cross-cutting helpers.
+
+Responsibilities:
 
 - settings persistence
-- accessibility permission prompt
+- resource lookup
+- Accessibility permission checks
 - launch-at-login registration
 
-## Recommended next implementation order
+## Data Flow
 
-1. Replace placeholder cat drawing with sprite sheet playback.
-2. Add proper hover and drag interactions to the overlay.
-3. Add idle timer and random idle animations.
-4. Add reminder scheduling and notification bubbles.
-5. Add preferences window.
-6. Improve signing and packaging around the existing Xcode app target.
+The main runtime loop is:
 
-## Why AppKit, not Tauri
+1. `GlobalKeyMonitor` captures keyboard events
+2. `TypingIntensityTracker` derives a typing signal
+3. `PetBehaviorController` updates the current cat mood/state
+4. `OverlayWindowController` renders the resulting visual state
+5. `PetMotionController` adjusts overlay position when wandering is active
 
-For this product, the primary technical risk is not settings UI. It is native windowing and input behavior:
+Settings changes flow the other direction:
 
-- transparent overlay on all spaces
-- non-activating utility behavior
-- click-through toggling
-- system keyboard observation
+1. Preferences or menu bar actions change a setting
+2. `AppDelegate` updates the in-memory `AppSettings`
+3. dependent controllers are updated immediately
+4. `SettingsStore` persists the new JSON state to disk
 
-AppKit is the lowest-friction way to solve those directly.
+## Persistence
+
+User settings are stored locally as JSON under the user Application Support directory.
+
+Persisted settings include:
+
+- overlay position
+- overlay visibility
+- click-through mode
+- wandering enabled state
+- reminder timing
+- sleep timing
+- launch-at-login preference
+- text and indicator presentation settings
+- overlay scale
+
+## Platform Constraints
+
+Purrsor relies on macOS-specific behavior that directly shapes the architecture:
+
+- global keyboard monitoring requires Accessibility permission
+- the overlay uses a non-standard transparent floating window
+- launch-at-login is implemented with macOS system services
+- unsigned or ad hoc signed builds may need permissions to be re-granted after rebuilds
+
+Because of those constraints, validating behavior through a real `.app` bundle is more reliable than testing only through isolated source-level execution.
+
+## Design Principles
+
+- Keep the app local-first and offline
+- Prefer native AppKit behavior over abstraction layers
+- Keep state flow explicit and easy to trace
+- Favor small modules with narrow responsibilities
+- Minimize dependencies and hidden runtime complexity
