@@ -7,13 +7,13 @@ It stays intentionally small:
 - transparent always-on-top overlay
 - global keyboard-reactive cat behaviors
 - local reminders and customization
-- no cloud services, accounts, or third-party app integrations
+- no cloud services, accounts or telemetry
 
-## Status
+## Current Status
 
 - macOS only
 - native `Swift + AppKit`
-- unsigned and not notarized
+- not notarized
 - source builds and manual app bundle distribution
 
 ## Features
@@ -27,7 +27,6 @@ It stays intentionally small:
 - launch at login toggle in preferences
 - customizable text bubble and typing indicator
 - stretch reminders
-- adjustable sleep-after-idle timing
 
 ## Project Layout
 
@@ -91,7 +90,7 @@ Recommended flow:
 6. Find the security message for `Purrsor.app` and click `Open Anyway`.
 7. Launch the app again and confirm the dialog.
 
-If you prefer a terminal command for this app only, remove the quarantine attribute:
+If you prefer a terminal command for this app only, remove gatekeeper check:
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/Purrsor.app
@@ -104,9 +103,8 @@ After first launch, grant Accessibility permission:
 
 Notes:
 
-- If you move the app to a different folder after granting Accessibility, macOS may treat it as a different app path. Re-add the new path in Accessibility if key detection stops working.
 - If you keep multiple copies of `Purrsor.app` around, macOS privacy controls can become confusing. For normal use, keep only one installed copy in `/Applications` and avoid launching a second copy from `Build` or `DerivedData`.
-- If you rebuild and replace the app bundle, you may need to remove the old Accessibility entry and add the new one again. This is especially common with unsigned or ad hoc signed builds.
+- If you rebuild and replace the app bundle, you may need to remove the old Accessibility entry and add the new one again.
 - This repo does not currently ship a notarized release flow.
 
 ## Accessibility permission stability
@@ -135,12 +133,6 @@ If Accessibility keeps flipping off, clean up duplicate installs and reset the p
 tccutil reset Accessibility com.anuraagkhare.purrsor
 tccutil reset Accessibility com.anuraagkhare.purrsor.dev
 ```
-
-## Requirements
-
-Global key monitoring requires Accessibility permission on macOS. Apple documents that key event monitoring only works when the app is trusted for accessibility access.
-
-On first run, grant access in `System Settings > Privacy & Security > Accessibility`.
 
 
 ## Next milestones
