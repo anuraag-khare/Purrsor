@@ -54,6 +54,7 @@ Cross-cutting helpers:
 
 - settings persistence
 - accessibility permission prompt
+- launch-at-login registration
 
 ## Recommended next implementation order
 

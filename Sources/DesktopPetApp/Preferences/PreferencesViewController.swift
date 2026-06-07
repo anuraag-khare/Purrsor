@@ -7,6 +7,7 @@ final class PreferencesViewController: NSViewController {
     var onMovementEnabledChange: ((Bool) -> Void)?
     var onTextBubbleVisibilityChange: ((Bool) -> Void)?
     var onKeysPerSecondVisibilityChange: ((Bool) -> Void)?
+    var onLaunchAtLoginChange: ((Bool) -> Void)?
     var onBubbleTextColorChange: ((OverlayTextColor) -> Void)?
     var onTypingIndicatorTextColorChange: ((OverlayTextColor) -> Void)?
     var onOverlayScaleChange: ((Double) -> Void)?
@@ -25,6 +26,8 @@ final class PreferencesViewController: NSViewController {
     private let clickThroughButton = NSButton(checkboxWithTitle: "Enable click-through", target: nil, action: nil)
     private let wanderingButton = NSButton(checkboxWithTitle: "Enable wandering", target: nil, action: nil)
     private let textBubbleButton = NSButton(checkboxWithTitle: "Show mood bubble", target: nil, action: nil)
+    private let launchAtLoginButton = NSButton(checkboxWithTitle: "Launch at login", target: nil, action: nil)
+    private let launchAtLoginStatusLabel = NSTextField(labelWithString: "")
     private let bubbleTextColorLabel = NSTextField(labelWithString: "Mood bubble text color")
     private let bubbleTextColorWell = NSColorWell(frame: .zero)
     private let typingIndicatorButton = NSButton(checkboxWithTitle: "Enable typing speed indicator", target: nil, action: nil)
@@ -37,11 +40,13 @@ final class PreferencesViewController: NSViewController {
     private let requestAccessibilityButton = NSButton(title: "Grant Accessibility Access", target: nil, action: nil)
     private var pendingSettings: AppSettings?
     private var pendingAccessibilityTrusted: Bool?
+    private var pendingLaunchAtLoginState: LaunchAtLoginService.State?
     private var lastAppliedSettings: AppSettings?
     private var lastAppliedAccessibilityTrusted: Bool?
+    private var lastAppliedLaunchAtLoginState: LaunchAtLoginService.State?
 
     override func loadView() {
-        view = NSView(frame: NSRect(x: 0, y: 0, width: 380, height: 472))
+        view = NSView(frame: NSRect(x: 0, y: 0, width: 380, height: 532))
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
     }
@@ -70,6 +75,15 @@ final class PreferencesViewController: NSViewController {
         enqueueStateApplication()
     }
 
+    func setLaunchAtLoginState(_ state: LaunchAtLoginService.State) {
+        guard pendingLaunchAtLoginState != state || lastAppliedLaunchAtLoginState != state else {
+            return
+        }
+
+        pendingLaunchAtLoginState = state
+        enqueueStateApplication()
+    }
+
     private func configure() {
         titleLabel.font = .systemFont(ofSize: 22, weight: .semibold)
         subtitleLabel.textColor = .secondaryLabelColor
@@ -79,6 +93,10 @@ final class PreferencesViewController: NSViewController {
         typingIndicatorColorLabel.font = .systemFont(ofSize: 13, weight: .medium)
         overlayScaleLabel.font = .systemFont(ofSize: 13, weight: .medium)
         permissionStatusLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        launchAtLoginStatusLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        launchAtLoginStatusLabel.textColor = .secondaryLabelColor
+        launchAtLoginStatusLabel.lineBreakMode = .byWordWrapping
+        launchAtLoginStatusLabel.maximumNumberOfLines = 0
 
         reminderPopupButton.target = self
         reminderPopupButton.action = #selector(handleReminderChange)
@@ -99,6 +117,9 @@ final class PreferencesViewController: NSViewController {
 
         textBubbleButton.target = self
         textBubbleButton.action = #selector(handleTextBubbleChange)
+
+        launchAtLoginButton.target = self
+        launchAtLoginButton.action = #selector(handleLaunchAtLoginChange)
 
         bubbleTextColorWell.target = self
         bubbleTextColorWell.action = #selector(handleBubbleTextColorChange)
@@ -137,6 +158,11 @@ final class PreferencesViewController: NSViewController {
         bubbleColorRow.distribution = .fillProportionally
         bubbleColorRow.spacing = 12
 
+        let launchAtLoginRow = NSStackView(views: [launchAtLoginButton])
+        launchAtLoginRow.orientation = .vertical
+        launchAtLoginRow.alignment = .leading
+        launchAtLoginRow.spacing = 0
+
         let indicatorColorRow = NSStackView(views: [typingIndicatorColorLabel, typingIndicatorColorWell])
         indicatorColorRow.orientation = .horizontal
         indicatorColorRow.alignment = .centerY
@@ -159,6 +185,8 @@ final class PreferencesViewController: NSViewController {
             wanderingButton,
             overlayScaleRow,
             textBubbleButton,
+            launchAtLoginRow,
+            launchAtLoginStatusLabel,
             bubbleColorRow,
             typingIndicatorButton,
             indicatorColorRow,
@@ -218,6 +246,11 @@ final class PreferencesViewController: NSViewController {
                 textBubbleButton.state = textBubbleState
             }
 
+            let launchAtLoginState: NSControl.StateValue = settings.launchAtLoginEnabled ? .on : .off
+            if launchAtLoginButton.state != launchAtLoginState {
+                launchAtLoginButton.state = launchAtLoginState
+            }
+
             let bubbleColor = settings.bubbleTextColor.nsColor.usingColorSpace(.sRGB) ?? settings.bubbleTextColor.nsColor
             let currentBubbleColor = bubbleTextColorWell.color.usingColorSpace(.sRGB) ?? bubbleTextColorWell.color
             if !currentBubbleColor.isEqual(bubbleColor) {
@@ -249,6 +282,23 @@ final class PreferencesViewController: NSViewController {
 
             lastAppliedSettings = settings
             pendingSettings = nil
+        }
+
+        if let launchAtLoginState = pendingLaunchAtLoginState {
+            switch launchAtLoginState {
+            case .disabled:
+                launchAtLoginStatusLabel.stringValue = ""
+                launchAtLoginStatusLabel.textColor = .secondaryLabelColor
+            case .enabled:
+                launchAtLoginStatusLabel.stringValue = "Launch at login is enabled."
+                launchAtLoginStatusLabel.textColor = .systemGreen
+            case .requiresApproval:
+                launchAtLoginStatusLabel.stringValue = "Launch at login is pending approval in System Settings."
+                launchAtLoginStatusLabel.textColor = .systemOrange
+            }
+
+            lastAppliedLaunchAtLoginState = launchAtLoginState
+            pendingLaunchAtLoginState = nil
         }
 
         if let trusted = pendingAccessibilityTrusted {
@@ -283,6 +333,10 @@ final class PreferencesViewController: NSViewController {
 
     @objc private func handleBubbleTextColorChange() {
         onBubbleTextColorChange?(OverlayTextColor(bubbleTextColorWell.color))
+    }
+
+    @objc private func handleLaunchAtLoginChange() {
+        onLaunchAtLoginChange?(launchAtLoginButton.state == .on)
     }
 
     @objc private func handleTypingIndicatorChange() {

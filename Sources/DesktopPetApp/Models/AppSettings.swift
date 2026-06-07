@@ -55,6 +55,7 @@ struct AppSettings: Codable, Equatable {
     var wanderingEnabled: Bool
     var textBubbleVisible: Bool
     var keysPerSecondVisible: Bool
+    var launchAtLoginEnabled: Bool
     var bubbleTextColor: OverlayTextColor
     var typingIndicatorTextColor: OverlayTextColor
     var overlayScale: Double
@@ -69,6 +70,7 @@ struct AppSettings: Codable, Equatable {
         wanderingEnabled: true,
         textBubbleVisible: true,
         keysPerSecondVisible: true,
+        launchAtLoginEnabled: false,
         bubbleTextColor: .white,
         typingIndicatorTextColor: .white,
         overlayScale: 1.0,
@@ -102,6 +104,7 @@ struct AppSettings: Codable, Equatable {
         wanderingEnabled: Bool,
         textBubbleVisible: Bool,
         keysPerSecondVisible: Bool,
+        launchAtLoginEnabled: Bool,
         bubbleTextColor: OverlayTextColor,
         typingIndicatorTextColor: OverlayTextColor,
         overlayScale: Double,
@@ -115,6 +118,7 @@ struct AppSettings: Codable, Equatable {
         self.wanderingEnabled = wanderingEnabled
         self.textBubbleVisible = textBubbleVisible
         self.keysPerSecondVisible = keysPerSecondVisible
+        self.launchAtLoginEnabled = launchAtLoginEnabled
         self.bubbleTextColor = bubbleTextColor
         self.typingIndicatorTextColor = typingIndicatorTextColor
         self.overlayScale = overlayScale
@@ -133,6 +137,7 @@ struct AppSettings: Codable, Equatable {
         wanderingEnabled = try container.decodeIfPresent(Bool.self, forKey: .wanderingEnabled) ?? defaults.wanderingEnabled
         textBubbleVisible = try container.decodeIfPresent(Bool.self, forKey: .textBubbleVisible) ?? defaults.textBubbleVisible
         keysPerSecondVisible = try container.decodeIfPresent(Bool.self, forKey: .keysPerSecondVisible) ?? defaults.keysPerSecondVisible
+        launchAtLoginEnabled = try container.decodeIfPresent(Bool.self, forKey: .launchAtLoginEnabled) ?? defaults.launchAtLoginEnabled
         bubbleTextColor = try container.decodeIfPresent(OverlayTextColor.self, forKey: .bubbleTextColor) ?? defaults.bubbleTextColor
         typingIndicatorTextColor = try container.decodeIfPresent(OverlayTextColor.self, forKey: .typingIndicatorTextColor) ?? defaults.typingIndicatorTextColor
         overlayScale = try container.decodeIfPresent(Double.self, forKey: .overlayScale) ?? defaults.overlayScale

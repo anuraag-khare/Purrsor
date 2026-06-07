@@ -24,6 +24,7 @@
 		7EE4075DC2DABFE353270AC8 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6ABB82CCE3F8A005C3D3C2B /* StatusItemController.swift */; };
 		8331B64B5863E98317BF22C6 /* TypingIntensityTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712A549372BD49A922F8F447 /* TypingIntensityTracker.swift */; };
 		8CA1B03058397DBF8C9941D5 /* cat-v2-overheated.png in Resources */ = {isa = PBXBuildFile; fileRef = ABBF3E9A15EF984A7DFFCE53 /* cat-v2-overheated.png */; };
+		8EF1D0E9FD6F81BADBDF7FBF /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990FB5B7E2CE39B0B247C16C /* LaunchAtLoginService.swift */; };
 		A791BCD3589FB3FB7A29DEE0 /* cat-v2-animations.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8260860987891CB7A420F4 /* cat-v2-animations.json */; };
 		B084AB7E0BEBA2BCF8C14D49 /* cat-v2-idle.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B68FF00343D2A64A4A5B7D7 /* cat-v2-idle.png */; };
 		B38B8858A48FECCD30CF56B5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4AF72FEED4C1E1B5E39353 /* main.swift */; };
@@ -50,6 +51,7 @@
 		87131020DA065EA0769C9F99 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		8CBE755B8921A397E8A32A63 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		8E16A8ECE38D8C74ABF2FD0A /* CatMotionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatMotionState.swift; sourceTree = "<group>"; };
+		990FB5B7E2CE39B0B247C16C /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		ABBF3E9A15EF984A7DFFCE53 /* cat-v2-overheated.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cat-v2-overheated.png"; sourceTree = "<group>"; };
 		AC2775BDD97AF9FC9A7DAE59 /* Purrsor.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Purrsor.icns; sourceTree = "<group>"; };
 		BCF28284030E0940F281B7C1 /* cat-v2-petting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cat-v2-petting.png"; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				C612D0ACE8012CFF5D8D0843 /* AccessibilityPermission.swift */,
+				990FB5B7E2CE39B0B247C16C /* LaunchAtLoginService.swift */,
 				0DA4AE11279C9DFB5813DB7E /* ResourceLocator.swift */,
 				87131020DA065EA0769C9F99 /* SettingsStore.swift */,
 			);
@@ -288,6 +291,7 @@
 				0545165F24D299A05C5CEB14 /* CatSpriteCatalog.swift in Sources */,
 				59C912A737C49F82686DA8B6 /* CatVisualState.swift in Sources */,
 				11F41857FF1F19AC8D8E4D2C /* GlobalKeyMonitor.swift in Sources */,
+				8EF1D0E9FD6F81BADBDF7FBF /* LaunchAtLoginService.swift in Sources */,
 				ED73ABE27028BAE882F14270 /* OverlayWindowController.swift in Sources */,
 				C3D85B3C75EBA51CCA8A8E75 /* PetBehaviorController.swift in Sources */,
 				3A5293342401E180ED9A8370 /* PetMotionController.swift in Sources */,

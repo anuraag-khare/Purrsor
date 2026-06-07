@@ -3,7 +3,9 @@ import AppKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settingsStore = SettingsStore()
+    private let launchAtLoginService = LaunchAtLoginService()
     private var settings: AppSettings
+    private var launchAtLoginState: LaunchAtLoginService.State
     private var accessibilityPollTimer: Timer?
     private var accessibilityTrusted = false
 
@@ -19,6 +21,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     override init() {
         settings = settingsStore.load()
+        launchAtLoginState = LaunchAtLoginService.currentState()
+        settings.launchAtLoginEnabled = launchAtLoginState != .disabled
         behaviorController = PetBehaviorController(settings: settings)
         super.init()
         accessibilityTrusted = AccessibilityPermission.isTrusted()
@@ -66,6 +70,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         preferencesWindowController?.onKeysPerSecondVisibilityChange = { [weak self] visible in
             self?.setKeysPerSecondVisible(visible)
         }
+        preferencesWindowController?.onLaunchAtLoginChange = { [weak self] enabled in
+            self?.setLaunchAtLogin(enabled)
+        }
         preferencesWindowController?.onBubbleTextColorChange = { [weak self] color in
             self?.setBubbleTextColor(color)
         }
@@ -93,6 +100,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         preferencesWindowController?.onRequestAccessibility = { [weak self] in
             self?.requestAccessibilityAccess()
         }
+        preferencesWindowController?.setLaunchAtLoginState(launchAtLoginState)
         preferencesWindowController?.setAccessibilityTrusted(accessibilityTrusted)
 
         statusItemController = StatusItemController(
@@ -209,6 +217,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setKeysPerSecondVisible(_ visible: Bool) {
         overlayController?.setKeysPerSecondVisible(visible)
         settings.keysPerSecondVisible = visible
+        preferencesWindowController?.sync(with: settings)
+        persistSettings()
+    }
+
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        let success = launchAtLoginService.setEnabled(enabled)
+        launchAtLoginState = launchAtLoginService.state
+        settings.launchAtLoginEnabled = launchAtLoginState != .disabled
+
+        if !success, settings.launchAtLoginEnabled != enabled {
+            NSSound.beep()
+        }
+
+        preferencesWindowController?.setLaunchAtLoginState(launchAtLoginState)
         preferencesWindowController?.sync(with: settings)
         persistSettings()
     }

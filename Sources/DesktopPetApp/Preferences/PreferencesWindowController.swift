@@ -22,6 +22,10 @@ final class PreferencesWindowController: NSWindowController {
         didSet { viewController.onKeysPerSecondVisibilityChange = onKeysPerSecondVisibilityChange }
     }
 
+    var onLaunchAtLoginChange: ((Bool) -> Void)? {
+        didSet { viewController.onLaunchAtLoginChange = onLaunchAtLoginChange }
+    }
+
     var onBubbleTextColorChange: ((OverlayTextColor) -> Void)? {
         didSet { viewController.onBubbleTextColorChange = onBubbleTextColorChange }
     }
@@ -53,13 +57,14 @@ final class PreferencesWindowController: NSWindowController {
     private let viewController = PreferencesViewController()
     private var latestSettings: AppSettings
     private var latestAccessibilityTrusted = false
+    private var latestLaunchAtLoginState: LaunchAtLoginService.State = .disabled
     private var applyStateScheduled = false
 
     init(settings: AppSettings) {
         latestSettings = settings
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 380, height: 472),
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 504),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -95,6 +100,11 @@ final class PreferencesWindowController: NSWindowController {
         scheduleApplyLatestState()
     }
 
+    func setLaunchAtLoginState(_ state: LaunchAtLoginService.State) {
+        latestLaunchAtLoginState = state
+        scheduleApplyLatestState()
+    }
+
     private func scheduleApplyLatestState(force: Bool = false) {
         guard !applyStateScheduled else {
             return
@@ -118,6 +128,7 @@ final class PreferencesWindowController: NSWindowController {
 
     private func applyLatestState() {
         viewController.sync(with: latestSettings)
+        viewController.setLaunchAtLoginState(latestLaunchAtLoginState)
         viewController.setAccessibilityTrusted(latestAccessibilityTrusted)
     }
 }

@@ -24,6 +24,7 @@ It stays intentionally small:
 - cursor-tracked idle eyes
 - drag-to-reposition desktop pet
 - menu bar controls
+- launch at login toggle in preferences
 - customizable text bubble and typing indicator
 - stretch reminders
 - adjustable sleep-after-idle timing
@@ -144,7 +145,7 @@ On first run, grant access in `System Settings > Privacy & Security > Accessibil
 
 ## Next milestones
 
-1. Add launch-at-login.
-2. Add drag persistence, scale controls, and reminder UI.
+1. Add broader scale ranges and better drag persistence polish.
+2. Expand reminder UI and scheduling options.
 3. Improve signing and packaging for smoother local installs.
-4. Pmomodero feature
+4. Add a focused reminder mode such as pomodoro-style prompts.
