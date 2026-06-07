@@ -13,11 +13,9 @@
 </p>
 
 <p align="center">
-  <video src="docs/readme-assets/demo.mp4" controls muted playsinline width="900"></video>
-</p>
-
-<p align="center">
-  <a href="docs/readme-assets/demo.mp4">Watch the demo video</a>
+  <a href="docs/readme-assets/demo.mp4">
+    <img src="docs/readme-assets/demo.gif" alt="Purrsor demo preview">
+  </a>
 </p>
 
 Purrsor is a native macOS desktop pet built with AppKit. It stays intentionally small:
