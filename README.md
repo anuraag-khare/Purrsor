@@ -58,6 +58,30 @@ Purrsor is a native macOS desktop pet built with AppKit. It stays intentionally 
 
 This repo uses an Xcode workflow.
 
+Prerequisites for local builds:
+
+- full Xcode with `xcodebuild` available
+- `xcodegen` installed and available on `PATH`
+
+Install them with:
+
+```bash
+xcode-select -p
+```
+
+If that does not point at full Xcode, install Xcode from the Mac App Store and then run:
+
+```bash
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+sudo xcodebuild -runFirstLaunch
+```
+
+Install XcodeGen with Homebrew:
+
+```bash
+brew install xcodegen
+```
+
 Generate the project and open it in Xcode:
 
 ```bash
@@ -92,6 +116,8 @@ chmod +x scripts/build-app.sh
 ./scripts/build-app.sh
 cp -R Build/Release/Purrsor.app /Applications/
 ```
+
+The build scripts in this repo call both `xcodegen` and `xcodebuild`, so Command Line Tools alone are not enough.
 
 ## Installation Notes
 
